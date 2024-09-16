@@ -30,7 +30,7 @@ The dataset used in this project, generated with the help of ChatGPT, contains 2
 - **difficulty_level**: The difficulty level of the activity (e.g., Easy, Moderate, Challenging).
 - **instructions**: Step-by-step instructions on how to perform the activity.
 
-Dataset can be found in  [data/data.csv](#data/data.csv)
+Dataset can be found in  [data/data.csv](data/data.csv)
 
 ## Technologies
 
