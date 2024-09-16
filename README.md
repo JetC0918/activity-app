@@ -282,13 +282,15 @@ The difference is not very significant, so we proceed with gpt-4o-mini
 ## Monitoring
 We use Grafana for monitoring the application.
 
-It's accessible at (localhost:3000)[localhost:3000]:
+It's accessible at [localhost:3000](localhost:3000):
 
 Login: "admin"
 Password: "admin"
 
 ### Dashboards
-[dashboard](image/image.png)
+<p align="center">
+  <img src="images/image.png">
+</p> 
 The monitoring dashboard contains several panels:
 
 1. **Last 5 Conversations (Table)**: Displays a table showing the five most recent conversations, including details such as the question, answer, relevance, and timestamp. This panel helps monitor recent interactions with users.
