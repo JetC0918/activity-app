@@ -212,6 +212,7 @@ The code for the application is in the `activity_planner` folder:
 * [minsearch.py](activity-app/minsearch.py) - an in-memory search engine
 * [db.py](activity-app/db.py) - the logic for logging the requests and responses to postgres
 * [db_prep.py](activity-app/db_prep.py) - the script for initializing the database
+
 We also have some code in the project root directory:
 
 * [test.py](test.py) - select a random question for testing
@@ -258,7 +259,7 @@ The best boosting parameters:
       'age_group': 1.05,
       'difficulty_level': 1.86,
       'instructions': 2.00
-        }
+}
 ```
 
 ### RAG Flow
