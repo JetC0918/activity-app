@@ -4,11 +4,6 @@
 
 Planning and organizing activities can be a daunting and time-consuming task for many people, whether it involves finding fun family activities, selecting engaging indoor projects for children, or planning group events. The process often involves manually searching through multiple sources to find relevant activities that match specific needs, such as age group, difficulty level, or time constraints.
 
-The lack of a centralized, easy-to-use tool for activity planning leads to several problems:
-- **Inefficient Activity Selection:** Users spend a significant amount of time searching for suitable activities, often without finding something that meets their needs.
-- **Limited Customization:** It's challenging to tailor activities to specific requirements, such as available materials, age appropriateness, or preferred difficulty level.
-- **Lack of Detailed Guidance:** Even when an activity is chosen, users may struggle to find clear instructions or necessary materials to execute the activity successfully.
-
 The **Activity Planner Assistant** addresses these problems by providing an intelligent and interactive solution to help users efficiently find, replace, and understand activities tailored to their needs.
 
 ## What The Application Do
@@ -20,24 +15,9 @@ The **Activity Planner Assistant** is an intelligent tool designed to simplify t
 3. **Access Step-by-Step Guidance:** For each selected activity, users can obtain detailed, step-by-step instructions along with a list of required materials, ensuring a smooth and hassle-free experience.
 4. **Optimize Activity Planning:** Users can receive suggestions on how to adapt activities to different scenarios, such as limited resources or varying group sizes. 
 
-### Key Features
-
-- **Interactive Chat:** Users can interact with the assistant in natural language to receive personalized suggestions and guidance.
-- **Quick Access to Activity Information:** Retrieve detailed activity information from a curated dataset, saving time and effort.
-- **Customizable and Adaptive Planning:** Tailor activity planning to specific needs, making the experience flexible and user-friendly.
-
 By using the **Activity Planner Assistant**, users can save time, reduce effort, and make more informed decisions when planning activities, ensuring a more enjoyable and stress-free experience.
 
-
-## Technologies
-
-* [Minsearch](https://github.com/DataTalksClub/llm-zoomcamp/blob/main/01-intro/minsearch.py) - for 
-full-text search
-* OpenAI as LLM
-* Flask as the API interface (see [Background](#background)
-for more infomation on Flask)
-
-## Data
+## Dataset
 
 The dataset used in this project, generated with the help of ChatGPT, contains 240 records and is located in the `data` folder. Each record provides detailed information about a variety of activities, including:
 
@@ -50,89 +30,129 @@ The dataset used in this project, generated with the help of ChatGPT, contains 2
 - **difficulty_level**: The difficulty level of the activity (e.g., Easy, Moderate, Challenging).
 - **instructions**: Step-by-step instructions on how to perform the activity.
 
-Here is an example of the data:
+Dataset can be found in  [data/data.csv](#data/data.csv)
 
-| activity_name      | activity_type | materials_needed                     | time_required | age_group   | difficulty_level | instructions                                                                                                 |
-|--------------------|---------------|--------------------------------------|---------------|-------------|------------------|--------------------------------------------------------------------------------------------------------------|
-| Family Picnic      | Outdoor       | Picnic blanket, Basket of food, Drinks | 2 hours       | Toddlers    | Easy             | Spread out the blanket, arrange the food and drinks, and enjoy a meal together in a park or backyard.        |
-| DIY Craft Project  | Indoor        | Craft supplies, Glue, Scissors         | 1 hour        | School-aged | Moderate         | Choose a craft project, gather all necessary supplies, and follow the steps to complete the craft. Supervise children with glue and scissors. |
-| Board Game Night   | Indoor        | Board games, Snacks                    | 2 hours       | Teens       | Easy             | Select a few board games, set up a comfortable area for playing, and enjoy a night of games and snacks with family or friends. |
+## Technologies
 
+* Python 3.12
+* Docker and Docker Compose for containerization
+* [Minsearch](https://github.com/DataTalksClub/llm-zoomcamp/blob/main/01-intro/minsearch.py) - for 
+full-text search
+* OpenAI as LLM
+* Grafana for monitoring and PostgreSQL as the backend for it
+* Flask as the API interface (see [Background](#background)
+for more infomation on Flask)
 
-## Running it with Docker 
-The easiest way to run this application is with Docker
+## Preparation 
+
+We are using OpenAI so we need to provide the API key:
+
+1. Install `direnv`.
+2. Copy `.envrc_template` into `.envrc` and insert your key there.
+3. For OpenAI, it's recommended to create a new project and use a separate key.
+4. Run direnv allow to load the key into your environment.
+
+For dependency management, we use pipenv, so you need to install it:
+
 ```bash
+
+pip install pipenv
+
+```
+
+Once installed, you can install the app dependencies:
+
+```bash
+
+pipenv install --dev
+
+```
+
+## Running the application
+### Database configuration
+
+Before the application starts for the first time, the database needs to be initialized.
+
+First, run postgres:
+```bash
+docker-compose up postgres
+```
+Then run the `db_prep.py` script:
+
+```bash
+pipenv shell
+
+cd fitness_assistant
+
+export POSTGRES_HOST=localhost
+python db_prep.py
+``` 
+
+### Running with Docker-Compose
+The easiest way to run the application is with docker-compose:
+
+``` bash
 docker-compose up
 ```
 
-If you need to change something in the dockerfile and test
-it quickly, you can use the following command:
-
-```bash 
-docker build -t activity-app .
-
-docker run -it --rm \
-    -e OPENAI_API_KEY=${OPENAI_API_KEY} \
-    -e DATA_PATH="data/data.csv" \
-    -p 5000:5000 \
-    activity-app 
-```
-
-## Running locally 
+### Running locally 
 ### Installing the dependencies:
 
-If you dont use Docker and want to run locally,
-you need to manually install the environment and install
-all the dependencies.
+If you want to run the application locally, start only postres and grafana:
 
-We use pipenv for managing dependencies and Python 3.12.
+``` bash
 
-Make sure you have `pipenv` installed
+docker-compose up postgres grafana
 
-```bash
-pip install pipenv
 ```
+If you previously started all applications with docker-compose up, you need to stop the app:
 
-Installing the dependencies:
+``` bash
 
+docker-compose stop app
+
+```  
+Now run the app on your host machine:
+ 
 ```bash
-pipenv install --dev
-```
-
-## Prepare the application 
-
-Before we can use the app, we need to initialize the database.
-
-We can do it by running [`db_prep.py`](activity-app/db_prep.py) script:
-
-```bash
-cd activity-app
-
 pipenv shell
 
-export POSTGRES_HOST=localhost 
-python db_prep.py
-```
+cd fitness_assistant
 
-## Running the application:
-
-For runnnig the application locally, do this:
-
-Running the Flask application:
-```bash 
-pipenv shell
-
-export POSTGRES_HOST=localhost  
+export POSTGRES_HOST=localhost
 python app.py
-```
+``` 
 
 ## Using the application
+When the application is running, we can start using it.
 
-First, you need to run the application either with
-docker-compose or locally.
+### CLI
+We built an interactive CLI application using [questionary](https://questionary.readthedocs.io/en/stable/).
 
-When it's running, let's test it:
- 
+To start it, run:
+
+``` bash
+pipenv run python cli.py
+```
+
+You can also make it randomly select a question from our ground truth dataset:
+
+``` bash
+pipenv run python cli.py --random
+```
+
+### Using requests
+When the application is running, you can use requests to send questions—use test.py for testing it:
+
+``` bash
+pipenv run python test.py
+``` 
+
+It will pick a random question from the ground truth dataset and send it to the app.
+
+### CURL
+You can also use `curl` for interacting with the API:
+
 ```bash  
 
 URL=http://localhost:5000
@@ -147,7 +167,7 @@ curl -X POST \
     ${URL}/question
 ```
 
-The response will be something like this:
+You will see the following response:
 ```bash
   "answer": "For the Family Picnic, you will need the following materials: a picnic blanket, a basket of food, and drinks.",
   "conversation_id": "0b21d0f3-c6df-492e-b2b3-fdf455552924,
@@ -182,6 +202,20 @@ Alternatively, you can use [test.py](activity-app/test.py) for testing it:
 ```bash
 pipenv run python test.py
 ```
+
+## Code
+The code for the application is in the `activity_planner` folder:
+
+* [app.py](activity-app/app.py)- the Flask API, the main entrypoint to the application
+* [rag.py](activity-app/rag.py) - the main RAG logic for building the retrieving the data and building the prompt
+* [ingest.py](activity-app/ingest.py) - loading the data into the knowledge base
+* [minsearch.py](activity-app/minsearch.py) - an in-memory search engine
+* [db.py](activity-app/db.py) - the logic for logging the requests and responses to postgres
+* [db_prep.py](activity-app/db_prep.py) - the script for initializing the database
+We also have some code in the project root directory:
+
+* [test.py](test.py) - select a random question for testing
+* [cli.py](cli.py) - interactive CLI for the APP
 
 ## Interface
 
@@ -246,6 +280,46 @@ For gpt-4o, among 200 records, we had:
 The difference is not very significant, so we proceed with gpt-4o-mini
 
 ## Monitoring
+We use Grafana for monitoring the application.
+
+It's accessible at (localhost:3000)[localhost:3000]:
+
+Login: "admin"
+Password: "admin"
+
+### Dashboards
+[dashboard](image/image.png)
+The monitoring dashboard contains several panels:
+
+1. **Last 5 Conversations (Table)**: Displays a table showing the five most recent conversations, including details such as the question, answer, relevance, and timestamp. This panel helps monitor recent interactions with users.
+2. **+1/-1 (Pie Chart)**: A pie chart that visualizes the feedback from users, showing the count of positive (thumbs up) and negative (thumbs down) feedback received. This panel helps track user satisfaction.
+3. **Relevancy (Gauge)**: A gauge chart representing the relevance of the responses provided during conversations. The chart categorizes relevance and indicates thresholds using different colors to highlight varying levels of response quality. 
+
+### Starting Grafana
+All Grafana configurations are in the (grafana)[grafana/] folder:
+
+* (init.py)[grafana/init.py] - for initializing the datasource and the dashboard.
+* (dashboard.json)[grafana/dashboard.json] - the actual dashboard (taken from LLM Zoomcamp without changes).
+To initialize the dashboard, first ensure Grafana is running (it starts automatically when you do docker-compose up).
+
+Then run:
+
+``` bash
+pipenv shell
+
+cd grafana
+
+# make sure the POSTGRES_HOST variable is not overwritten 
+env | grep POSTGRES_HOST
+
+python init.py
+```
+
+Then go to (localhost:3000)[localhost:3000]:
+
+* Login: "admin"
+* Password: "admin"
+When prompted, keep "admin" as the new password.
 
 ## Background
 Here we provide background on some tech not used in the course and links for further reading.
